@@ -1,25 +1,25 @@
 {
   "expo": {
-    "name": "ListingAI2",
-    "slug": "ListingAI2",
+    "name": "ListingAI",
+    "slug": "listingai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "listingai2",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "scheme": "listingai",
+    "userInterfaceStyle": "dark",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.listingai.app",
+      "requireFullScreen": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#111e2d",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundImage": "./assets/images/android-icon-background.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.listingai.app"
     },
     "web": {
       "output": "static",
@@ -33,16 +33,23 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
+          "backgroundColor": "#111e2d"
         }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
-    }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow ListingAI to access your photos",
+          "cameraPermission": "Allow ListingAI to access your camera"
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow ListingAI to access your microphone"
+        }
+      ],
+      "expo-secure-store"
+    ]
   }
 }

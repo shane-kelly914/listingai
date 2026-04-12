@@ -1,0 +1,130 @@
+export const PROPERTY_TYPES = [
+  'single-family home',
+  'condo',
+  'townhouse',
+  'multi-family',
+  'luxury estate',
+  'new construction',
+  'fixer-upper',
+  'land',
+];
+
+export const TARGET_BUYERS = [
+  'first-time buyers',
+  'young families',
+  'move-up buyers',
+  'downsizers / empty nesters',
+  'luxury buyers',
+  'investors',
+  'remote workers / WFH',
+];
+
+export const WRITING_TONES = [
+  { value: 'professional', label: 'Professional' },
+  { value: 'luxury', label: 'Luxury' },
+  { value: 'warm', label: 'Warm' },
+  { value: 'modern', label: 'Modern' },
+  { value: 'storytelling', label: 'Storytelling' },
+  { value: 'recommended', label: 'Let AI Decide' },
+];
+
+export const MLS_PLATFORMS = [
+  { value: 0, label: 'No limit', charLimit: 0 },
+  { value: 1000, label: 'Flexmls', charLimit: 1000 },
+  { value: 1500, label: 'Matrix / CoreLogic', charLimit: 1500 },
+  { value: 2000, label: 'Bright MLS', charLimit: 2000 },
+  { value: 4000, label: 'Paragon MLS', charLimit: 4000 },
+  { value: 5000, label: 'Zillow', charLimit: 5000 },
+];
+
+export const STATE_CITIES = {
+  "Alabama": ["Birmingham","Montgomery","Mobile","Huntsville","Tuscaloosa","Hoover","Auburn","Dothan","Madison","Bessemer","Anniston","Florence"],
+  "Alaska": ["Anchorage","Juneau","Fairbanks","Ketchikan","Sitka","Wasilla","Valdez","Kodiak","Palmer","Bethel","Barrow","Kenai"],
+  "Arizona": ["Phoenix","Tucson","Phoenix","Glendale","Chandler","Scottsdale","Gilbert","Tempe","Peoria","Mesa","Surprise","Avondale"],
+  "Arkansas": ["Little Rock","Fort Smith","Fayetteville","Springdale","Jonesboro","North Little Rock","Texarkana","Hot Springs","Pine Bluff","Benton"],
+  "California": ["Los Angeles","San Diego","San Jose","San Francisco","Fresno","Sacramento","Long Beach","Oakland","Bakersfield","Anaheim","Santa Ana","Riverside","Stockton","Irvine","Chula Vista","Santa Clarita","San Bernardino","Pasadena","Beverly Hills","Malibu"],
+  "Colorado": ["Denver","Colorado Springs","Aurora","Fort Collins","Lakewood","Thornton","Arvada","Westminster","Boulder","Pueblo","Castle Rock","Broomfield"],
+  "Connecticut": ["Bridgeport","New Haven","Hartford","Stamford","Waterbury","Norwalk","Danbury","New Britain","Greenwich","Westport"],
+  "Delaware": ["Wilmington","Dover","Newark","Middletown","Bear","Smyrna","Milford","Seaford","Georgetown","Elsmere"],
+  "Florida": ["Jacksonville","Miami","Tampa","Orlando","St. Petersburg","Hialeah","Port St. Lucie","Cape Coral","Tallahassee","Fort Lauderdale","Pembroke Pines","Hollywood","Gainesville","Coral Springs","Naples","Sarasota","Boca Raton","West Palm Beach","Clearwater","Daytona Beach"],
+  "Georgia": ["Atlanta","Augusta","Columbus","Macon","Savannah","Athens","Sandy Springs","Roswell","Johns Creek","Albany","Alpharetta","Marietta","Brookhaven"],
+  "Hawaii": ["Honolulu","Pearl City","Hilo","Kailua","Waipahu","Kaneohe","Mililani Town","Kahului","Ewa Gentry","Kapolei"],
+  "Idaho": ["Boise","Meridian","Nampa","Idaho Falls","Caldwell","Pocatello","Coeur d'Alene","Twin Falls","Post Falls","Eagle"],
+  "Illinois": ["Chicago","Aurora","Rockford","Joliet","Naperville","Springfield","Peoria","Elgin","Champaign","Evanston","Schaumburg","Arlington Heights"],
+  "Indiana": ["Indianapolis","Fort Wayne","Evansville","South Bend","Carmel","Fishers","Bloomington","Hammond","Gary","Lafayette","Muncie","Noblesville"],
+  "Iowa": ["Des Moines","Cedar Rapids","Davenport","Sioux City","Iowa City","Waterloo","Ames","West Des Moines","Council Bluffs","Ankeny"],
+  "Kansas": ["Wichita","Overland Park","Kansas City","Olathe","Topeka","Lawrence","Shawnee","Manhattan","Lenexa","Salina"],
+  "Kentucky": ["Louisville","Lexington","Bowling Green","Owensboro","Covington","Richmond","Georgetown","Florence","Hopkinsville","Nicholasville"],
+  "Louisiana": ["New Orleans","Baton Rouge","Shreveport","Lafayette","Lake Charles","Kenner","Bossier City","Monroe","Alexandria","Houma"],
+  "Maine": ["Portland","Lewiston","Bangor","South Portland","Auburn","Biddeford","Sanford","Brunswick","Scarborough","Westbrook"],
+  "Maryland": ["Baltimore","Columbia","Germantown","Silver Spring","Waldorf","Frederick","Ellicott City","Glen Burnie","Rockville","Bethesda","Annapolis"],
+  "Massachusetts": ["Boston","Worcester","Springfield","Cambridge","Lowell","Brockton","New Bedford","Quincy","Lynn","Newton","Somerville","Brookline"],
+  "Michigan": ["Detroit","Grand Rapids","Warren","Sterling Heights","Ann Arbor","Lansing","Flint","Dearborn","Livonia","Troy","Kalamazoo","Rochester Hills"],
+  "Minnesota": ["Minneapolis","St. Paul","Rochester","Bloomington","Duluth","Brooklyn Park","Plymouth","Woodbury","Lakeville","Maple Grove","Eagan","Eden Prairie"],
+  "Mississippi": ["Jackson","Gulfport","Southaven","Biloxi","Hattiesburg","Olive Branch","Tupelo","Meridian","Pearl","Madison"],
+  "Missouri": ["Kansas City","St. Louis","Springfield","Columbia","Independence","Lee's Summit","O'Fallon","St. Joseph","St. Charles","Blue Springs"],
+  "Montana": ["Billings","Missoula","Great Falls","Bozeman","Butte","Helena","Kalispell","Havre","Anaconda","Miles City"],
+  "Nebraska": ["Omaha","Lincoln","Bellevue","Grand Island","Kearney","Fremont","Hastings","Norfolk","North Platte","Columbus"],
+  "Nevada": ["Las Vegas","Henderson","Reno","North Las Vegas","Sparks","Carson City","Fernley","Elko","Mesquite","Boulder City"],
+  "New Hampshire": ["Manchester","Nashua","Concord","Dover","Rochester","Keene","Portsmouth","Laconia","Lebanon","Claremont"],
+  "New Jersey": ["Newark","Jersey City","Paterson","Elizabeth","Lakewood","Edison","Woodbridge","Toms River","Hamilton","Trenton","Clifton","Cherry Hill","Hoboken","Princeton"],
+  "New Mexico": ["Albuquerque","Las Cruces","Rio Rancho","Santa Fe","Roswell","Farmington","Clovis","Hobbs","Alamogordo","Carlsbad"],
+  "New York": ["New York City","Buffalo","Rochester","Yonkers","Syracuse","Albany","New Rochelle","Mount Vernon","Schenectady","White Plains","Long Beach","Saratoga Springs"],
+  "North Carolina": ["Charlotte","Raleigh","Greensboro","Durham","Winston-Salem","Fayetteville","Cary","Wilmington","High Point","Asheville","Chapel Hill","Concord"],
+  "North Dakota": ["Fargo","Bismarck","Grand Forks","Minot","West Fargo","Williston","Dickinson","Mandan","Jamestown","Wahpeton"],
+  "Ohio": ["Columbus","Cleveland","Cincinnati","Toledo","Akron","Dayton","Parma","Canton","Youngstown","Lorain","Dublin","Westerville"],
+  "Oklahoma": ["Oklahoma City","Tulsa","Norman","Broken Arrow","Edmond","Lawton","Moore","Midwest City","Enid","Stillwater"],
+  "Oregon": ["Portland","Salem","Eugene","Gresham","Hillsboro","Beaverton","Bend","Medford","Springfield","Corvallis","Lake Oswego","Tigard"],
+  "Pennsylvania": ["Philadelphia","Pittsburgh","Allentown","Reading","Erie","Bethlehem","Lancaster","Harrisburg","Scranton","State College","York","Wilkes-Barre"],
+  "Rhode Island": ["Providence","Warwick","Cranston","Pawtucket","East Providence","Woonsocket","Newport","Central Falls","Westerly","North Providence"],
+  "South Carolina": ["Charleston","Columbia","North Charleston","Mount Pleasant","Rock Hill","Greenville","Summerville","Goose Creek","Hilton Head Island","Myrtle Beach"],
+  "South Dakota": ["Sioux Falls","Rapid City","Aberdeen","Brookings","Watertown","Mitchell","Yankton","Pierre","Huron","Vermillion"],
+  "Tennessee": ["Nashville","Memphis","Knoxville","Chattanooga","Clarksville","Murfreesboro","Franklin","Johnson City","Jackson","Hendersonville","Germantown"],
+  "Texas": ["Houston","San Antonio","Dallas","Austin","Fort Worth","El Paso","Arlington","Corpus Christi","Plano","Lubbock","Laredo","Irving","Frisco","McKinney","Round Rock","Sugar Land","The Woodlands","Katy","Pearland","College Station"],
+  "Utah": ["Salt Lake City","West Valley City","Provo","West Jordan","Orem","Sandy","Ogden","St. George","Layton","Lehi","Draper","Park City"],
+  "Vermont": ["Burlington","South Burlington","Rutland","Essex Junction","Barre","Montpelier","Winooski","St. Albans","Newport","Bennington"],
+  "Virginia": ["Virginia Beach","Norfolk","Chesapeake","Richmond","Newport News","Alexandria","Hampton","Roanoke","Portsmouth","Lynchburg","Arlington","Fairfax","Charlottesville"],
+  "Washington": ["Seattle","Spokane","Tacoma","Vancouver","Bellevue","Kent","Everett","Renton","Federal Way","Kirkland","Redmond","Olympia","Bellingham"],
+  "West Virginia": ["Charleston","Huntington","Morgantown","Parkersburg","Wheeling","Weirton","Martinsburg","Fairmont","Beckley","Clarksburg"],
+  "Wisconsin": ["Milwaukee","Madison","Green Bay","Kenosha","Racine","Appleton","Waukesha","Oshkosh","Eau Claire","Janesville","Brookfield","Wauwatosa"],
+  "Wyoming": ["Cheyenne","Casper","Laramie","Gillette","Rock Springs","Sheridan","Green River","Evanston","Riverton","Jackson"],
+  "District of Columbia": ["Washington"]
+};
+
+export const TONE_MAP = {
+  professional: 'professional, polished, and confident',
+  luxury: 'luxurious, exclusive, and aspirational',
+  warm: 'warm, inviting, and lifestyle-focused',
+  modern: 'modern, bold, and energetic',
+  storytelling: 'narrative-driven, painting a picture of daily life in this home'
+};
+
+export const FREE_LIMIT = 3;
+export const LOCAL_PROMO_CODES = ['LISTINGAI-OWNER-2026', 'SHANEKELLY914'];
+
+export const FH_RULES = [
+  { pattern: /\b(family|families|children|kids|singles?|married|couples?)\s*(friendly|oriented)\s*/gi, replace: '', issue: 'Familial status language' },
+  { pattern: /\b(family|families|children|kids|singles?|married|couples?)\s*(neighborhood|area|community)/gi, replace: (m, p1, p2) => p2, issue: 'Familial status language' },
+  { pattern: /\b(church|synagogue|mosque|temple|cathedral)\s*(nearby|close|walking|district)/gi, replace: 'local amenities', issue: 'Religious reference in location' },
+  { pattern: /\b(walking distance to|near|close to)\s*(church|synagogue|mosque|temple|school)/gi, replace: (m, p1) => p1 + ' local amenities', issue: 'Proximity to religious/educational institutions' },
+  { pattern: /\b(perfect for|ideal for|great for)\s*(young|retired|senior|elderly|single|couple|family|bachelor|professional)\s*(families|buyers|owners|people|individuals|s)?\s*/gi, replace: '', issue: 'Target demographic language' },
+  { pattern: /\bmaster\s*bedroom/gi, replace: 'primary bedroom', issue: '"Master" terminology' },
+  { pattern: /\bmaster\s*suite/gi, replace: 'primary suite', issue: '"Master" terminology' },
+  { pattern: /\bmaster\s*bath/gi, replace: 'primary bath', issue: '"Master" terminology' },
+  { pattern: /\b(exclusive|prestigious)\s*(community|neighborhood|enclave|area)/gi, replace: (m, p1, p2) => p2, issue: 'Potentially exclusionary language' },
+  { pattern: /\bman cave/gi, replace: 'bonus room', issue: 'Gender-specific room name' },
+  { pattern: /\bbachelor pad/gi, replace: 'bonus room', issue: 'Gender-specific room name' },
+  { pattern: /\b(mother-in-law|granny|nanny)\s*(suite|flat|room|quarters)/gi, replace: (m, p1, p2) => 'guest ' + p2, issue: 'Age/gender-specific room name' },
+  { pattern: /\b(ethnic|oriental)\b/gi, replace: '', issue: 'Potentially discriminatory term' },
+  { pattern: /\burban\b/gi, replace: 'city', issue: 'Potentially discriminatory term' },
+  { pattern: /\b(ghetto|barrio)\b/gi, replace: '', issue: 'Potentially discriminatory term' },
+  { pattern: /\b(no children|adults only)\b/gi, replace: '', issue: 'Age/familial status restriction' },
+  { pattern: /\b(over 55|senior living|age restricted)\b/gi, replace: '', issue: 'Age restriction (verify if legally applicable)' },
+  { pattern: /\b(handicap|handicapped)\b/gi, replace: 'accessible', issue: 'Outdated disability language' },
+  { pattern: /\bcrippled\b/gi, replace: 'accessible', issue: 'Outdated disability language' },
+  { pattern: /\bwheelchair bound\b/gi, replace: 'wheelchair-accessible', issue: 'Outdated disability language' },
+  { pattern: /\bsafe neighborhood\b/gi, replace: 'well-established neighborhood', issue: 'Safety claims can imply racial composition' },
+  { pattern: /\blow crime\b/gi, replace: 'well-maintained', issue: 'Safety claims can imply racial composition' },
+  { pattern: /\bsafe area\b/gi, replace: 'well-established area', issue: 'Safety claims can imply racial composition' },
+  { pattern: /\bquiet neighborhood\b/gi, replace: 'well-established neighborhood', issue: 'Safety claims can imply racial composition' },
+];
