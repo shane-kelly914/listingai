@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ListingAI - AI-Powered Real Estate Listing Descriptions</title>
+  <meta name="description" content="Generate stunning, MLS-compliant real estate listing descriptions in seconds. Upload photos, add details, and let AI craft the perfect description.">
+  <link rel="icon" type="image/png" href="/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #111e2d;
+      --navy-light: #1a2a3d;
+      --orange: #E8862A;
+      --orange-dim: #c47024;
+      --orange-light: #fdf0e2;
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--gray-800);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(17, 30, 45, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 16px 0;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      height: 36px;
+    }
+    .nav-cta {
+      background: var(--orange);
+      color: var(--white);
+      padding: 10px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--orange-dim); }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(170deg, var(--navy) 0%, var(--navy-light) 60%, #1f3450 100%);
+      padding: 140px 24px 100px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--white));
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      color: var(--white);
+      max-width: 700px;
+      margin: 0 auto 20px;
+      line-height: 1.15;
+    }
+    .hero h1 span { color: var(--orange); }
+    .hero p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--gray-400);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: var(--white);
+      padding: 16px 36px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 17px;
+      transition: transform 0.2s, background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover { background: var(--orange-dim); transform: translateY(-2px); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      padding: 16px 36px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 17px;
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.14); }
+
+    /* PHONE MOCKUP */
+    .phone-section {
+      text-align: center;
+      margin-top: -40px;
+      position: relative;
+      z-index: 10;
+      padding: 0 24px;
+    }
+    .phone-frame {
+      display: inline-block;
+      background: var(--navy);
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .phone-screen {
+      background: var(--gray-50);
+      border-radius: 26px;
+      width: 280px;
+      height: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+    .phone-screen .mock-logo { height: 48px; margin-bottom: 16px; }
+    .phone-screen h3 { font-size: 16px; color: var(--navy); margin-bottom: 20px; }
+    .mock-upload {
+      width: 100%;
+      border: 2px dashed var(--orange);
+      border-radius: 14px;
+      background: var(--orange-light);
+      padding: 32px 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .mock-upload-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .mock-upload span { font-size: 13px; color: var(--orange); font-weight: 600; }
+    .mock-btn {
+      width: 100%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .mock-btn-outline {
+      width: 100%;
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 14px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* HOW IT WORKS */
+    .section { padding: 100px 24px; }
+    .section-center { text-align: center; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block;
+      background: var(--orange-light);
+      color: var(--orange);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    .section h2 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 16px;
+    }
+    .section .subtitle {
+      font-size: 18px;
+      color: var(--gray-600);
+      max-width: 520px;
+      margin: 0 auto 60px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+    .step {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .step:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+    .step-number {
+      width: 52px;
+      height: 52px;
+      background: var(--orange-light);
+      color: var(--orange);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 22px;
+      margin: 0 auto 20px;
+    }
+    .step h3 { font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .step p { font-size: 15px; color: var(--gray-600); line-height: 1.7; }
+
+    /* FEATURES */
+    .features-bg { background: var(--gray-50); }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+    .feature {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 32px 28px;
+      border: 1px solid var(--gray-200);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--orange-light);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .feature h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .feature p { font-size: 15px; color: var(--gray-600); line-height: 1.7; }
+
+    /* CTA */
+    .cta {
+      background: linear-gradient(170deg, var(--navy) 0%, var(--navy-light) 100%);
+      padding: 80px 24px;
+      text-align: center;
+      border-radius: 28px;
+      max-width: 1100px;
+      margin: 0 auto 100px;
+    }
+    .cta h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; color: var(--white); margin-bottom: 16px; }
+    .cta p { font-size: 18px; color: var(--gray-400); max-width: 480px; margin: 0 auto 36px; }
+
+    /* FOOTER */
+    footer {
+      background: var(--navy);
+      padding: 48px 24px;
+      text-align: center;
+    }
+    footer .footer-logo { height: 32px; margin-bottom: 16px; }
+    footer p { color: var(--gray-400); font-size: 14px; }
+    footer a { color: var(--orange); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* MOBILE */
+    @media (max-width: 640px) {
+      .hero { padding: 120px 20px 80px; }
+      .section { padding: 60px 20px; }
+      .cta { margin: 0 16px 60px; padding: 48px 20px; }
+      .phone-screen { width: 240px; height: 440px; padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <img src="/assets/logo.png" alt="ListingAI" class="nav-logo">
+      <a href="#get-started" class="nav-cta">Get Started Free</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Write Listings That <span>Sell</span>, in Seconds</h1>
+    <p>Upload your property photos, add a few details, and let AI generate stunning, MLS-compliant listing descriptions. Built for real estate agents who value their time.</p>
+    <div class="hero-buttons">
+      <a href="#get-started" class="btn-primary">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Try It Free
+      </a>
+      <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+    </div>
+  </section>
+
+  <!-- PHONE MOCKUP -->
+  <div class="phone-section">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <img src="/assets/logo.png" alt="ListingAI" class="mock-logo">
+        <h3>Create Perfect Listings</h3>
+        <div class="mock-upload">
+          <div class="mock-upload-icon">+</div>
+          <span>Upload Photos</span>
+        </div>
+        <div class="mock-btn">Generate Description</div>
+        <div class="mock-btn-outline">Voice Walkthrough</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section section-center" id="how-it-works">
+    <div class="section-inner">
+      <span class="section-tag">How It Works</span>
+      <h2>Three Steps to the Perfect Listing</h2>
+      <p class="subtitle">No more staring at a blank page. Go from photos to polished description in under a minute.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Upload Photos</h3>
+          <p>Snap or upload up to 15 property photos. Our AI analyzes every detail — natural light, finishes, layout, and flow.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Add Details</h3>
+          <p>Enter property basics or use our voice walkthrough feature to describe the home while you're on-site. We handle the rest.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Get Your Listing</h3>
+          <p>Receive a full description, MLS-formatted version, and social media caption — all fair housing compliant. Copy, paste, done.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section section-center features-bg">
+    <div class="section-inner">
+      <span class="section-tag">Features</span>
+      <h2>Everything You Need</h2>
+      <p class="subtitle">Purpose-built for real estate agents. Not another generic AI tool.</p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">📸</div>
+          <h3>Photo-Aware AI</h3>
+          <p>Our AI actually looks at your listing photos and weaves visual details into the description. Not just a text generator — it sees the home.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎙</div>
+          <h3>Voice Walkthrough</h3>
+          <p>Walk through the property and describe what you see. We transcribe it and fold those details into your listing automatically.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🏠</div>
+          <h3>MLS-Ready Output</h3>
+          <p>Get character-limited MLS descriptions formatted for your platform, plus full-length and social media versions in one click.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚖️</div>
+          <h3>Fair Housing Compliant</h3>
+          <p>Built-in screening catches 24+ fair housing violations before you publish. Protect yourself and your brokerage automatically.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">✍️</div>
+          <h3>Multiple Writing Tones</h3>
+          <p>Choose from professional, luxury, warm, modern, or let AI recommend the best tone for the property and target buyer.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📱</div>
+          <h3>Mobile-First</h3>
+          <p>Designed to work on your phone at the property. Take photos, record your walkthrough, and generate — all from the showing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="cta" id="get-started">
+      <h2>Ready to Save Hours on Every Listing?</h2>
+      <p>Start free — no credit card required. Generate your first three listings on us.</p>
+      <a href="https://listing-ai.app" class="btn-primary" onclick="alert('The mobile app is coming to the App Store soon! For now, open listing-ai.app on your phone to try it.'); return false;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Get Started Free
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <img src="/assets/logo.png" alt="ListingAI" class="footer-logo">
+    <p>&copy; 2026 ListingAI. Built for agents, by agents.</p>
+    <p style="margin-top: 8px;"><a href="mailto:shanekelly@egelloc.com">Contact</a></p>
+  </footer>
+
+</body>
+</html>
