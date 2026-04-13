@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import * as Haptics from 'expo-haptics';
 import {
   View, ScrollView, TouchableOpacity, Text, TextInput,
   ActivityIndicator, Alert, Image, KeyboardAvoidingView,
@@ -34,6 +35,32 @@ export default function HomeScreen() {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [promoLoading, setPromoLoading] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
+  const [recordSeconds, setRecordSeconds] = useState(0);
+  const [lastTranscript, setLastTranscript] = useState(''); // what we just added
+  const [lastDuration, setLastDuration] = useState(0);
+  const recordTimerRef = useRef(null);
+
+  // Tick the recording timer while a recording is active.
+  useEffect(() => {
+    if (isRecording) {
+      setRecordSeconds(0);
+      recordTimerRef.current = setInterval(() => {
+        setRecordSeconds(s => s + 1);
+      }, 1000);
+    } else if (recordTimerRef.current) {
+      clearInterval(recordTimerRef.current);
+      recordTimerRef.current = null;
+    }
+    return () => {
+      if (recordTimerRef.current) clearInterval(recordTimerRef.current);
+    };
+  }, [isRecording]);
+
+  const formatDuration = s => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${String(sec).padStart(2, '0')}`;
+  };
 
   // Form state
   const [propertyType, setPropertyType] = useState('');
@@ -62,15 +89,23 @@ export default function HomeScreen() {
   const handleVoiceToggle = async () => {
     try {
       if (isRecording) {
+        const duration = recordSeconds;
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         const uri = await stopRecording();
         if (uri) {
           setTranscribing(true);
           const base64Audio = await getBase64(uri);
           const transcription = await transcribeAudio(base64Audio);
-          setHighlights(prev => prev ? prev + ' ' + transcription : transcription);
+          setHighlights(prev => (prev ? prev + ' ' + transcription : transcription));
+          setLastTranscript(transcription);
+          setLastDuration(duration);
           setTranscribing(false);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
       } else {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        setLastTranscript('');
+        setLastDuration(0);
         await startRecording();
       }
     } catch (error) {
@@ -272,16 +307,64 @@ export default function HomeScreen() {
                   <Text style={{ ...TYPOGRAPHY.body, color: COLORS.white, fontWeight: '600' }}>
                     Stop Recording
                   </Text>
+                  <View style={{
+                    marginLeft: SPACING.sm,
+                    backgroundColor: 'rgba(255,255,255,0.18)',
+                    paddingHorizontal: SPACING.sm,
+                    paddingVertical: 2,
+                    borderRadius: RADIUS.sm,
+                  }}>
+                    <Text style={{ color: COLORS.white, fontWeight: '700', fontVariant: ['tabular-nums'] }}>
+                      ● {formatDuration(recordSeconds)}
+                    </Text>
+                  </View>
                 </>
               ) : (
                 <>
                   <Ionicons name="mic" size={24} color={COLORS.orange} />
                   <Text style={{ ...TYPOGRAPHY.body, color: COLORS.white, fontWeight: '600' }}>
-                    Start Recording
+                    {lastTranscript ? 'Record Another' : 'Start Recording'}
                   </Text>
                 </>
               )}
             </TouchableOpacity>
+
+            {/* Success confirmation after recording is transcribed */}
+            {lastTranscript && !isRecording && !transcribing && (
+              <View style={{
+                marginTop: SPACING.md,
+                padding: SPACING.md,
+                borderRadius: RADIUS.md,
+                backgroundColor: '#E8F5EC',
+                borderWidth: 1,
+                borderColor: COLORS.success,
+              }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.xs }}>
+                  <Ionicons name="checkmark-circle" size={18} color={COLORS.success} />
+                  <Text style={{ ...TYPOGRAPHY.bodySm, color: COLORS.success, fontWeight: '700' }}>
+                    Recording saved ({formatDuration(lastDuration)})
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setHighlights(prev => {
+                        const next = prev.replace(lastTranscript, '').replace(/\s+/g, ' ').trim();
+                        return next;
+                      });
+                      setLastTranscript('');
+                      setLastDuration(0);
+                    }}
+                    style={{ marginLeft: 'auto' }}
+                  >
+                    <Text style={{ ...TYPOGRAPHY.bodySm, color: COLORS.gray500, textDecorationLine: 'underline' }}>
+                      Undo
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={{ ...TYPOGRAPHY.bodySm, color: COLORS.navy }} numberOfLines={4}>
+                  "{lastTranscript}"
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Next Button */}
