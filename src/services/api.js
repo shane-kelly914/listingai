@@ -90,3 +90,18 @@ export async function createCheckoutSession(uid, email) {
     throw error;
   }
 }
+
+export async function verifySubscription(uid) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/verify-subscription`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid }),
+    });
+    const data = await parseApiResponse(response, 'Failed to verify subscription');
+    return data; // { isPro, status?, subscriptionId?, customerId? }
+  } catch (error) {
+    console.error('Error verifying subscription:', error);
+    throw error;
+  }
+}

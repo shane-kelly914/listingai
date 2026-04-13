@@ -3,6 +3,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../services/firebase';
 import * as firebaseService from '../services/firebase';
 import * as storageService from '../services/storage';
+import { verifySubscription } from '../services/api';
 import { FREE_LIMIT, LOCAL_PROMO_CODES } from '../constants/data';
 
 export const AuthContext = createContext({});
@@ -118,6 +119,28 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Ask the backend whether this user has an active Stripe subscription,
+  // and if so, persist isPro to Firestore. Safe to call repeatedly — it
+  // only flips state when Stripe confirms an active/trialing sub.
+  const refreshProStatus = async () => {
+    if (!user) return { isPro: false };
+    try {
+      const result = await verifySubscription(user.uid);
+      if (result?.isPro && !isPro) {
+        setIsPro(true);
+        try {
+          await firebaseService.updateUserProStatus(user.uid, true);
+        } catch (e) {
+          console.error('Error persisting pro status:', e);
+        }
+      }
+      return result;
+    } catch (error) {
+      console.error('Error refreshing pro status:', error);
+      return { isPro: false, error: error.message };
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -129,6 +152,7 @@ export function AuthProvider({ children }) {
     incrementUsage,
     redeemPromoCode,
     upgradeToPro,
+    refreshProStatus,
     remainingGenerations: Math.max(0, FREE_LIMIT - usageCount),
   };
 

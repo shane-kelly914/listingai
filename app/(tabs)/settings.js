@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View, ScrollView, Text, TouchableOpacity, Alert, ActivityIndicator,
+  AppState,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,10 +14,37 @@ import { COLORS, SPACING, RADIUS, TYPOGRAPHY, SHADOWS } from '../../src/constant
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
-  const { user, isPro, hasPromo, upgradeToPro, redeemPromoCode } = useAuth();
+  const { user, isPro, hasPromo, redeemPromoCode, refreshProStatus } = useAuth();
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [promoLoading, setPromoLoading] = useState(false);
   const [upgradeLoading, setUpgradeLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  // Tracks whether the user just left for Stripe checkout; when the app
+  // returns to the foreground we'll verify the subscription with Stripe.
+  const awaitingCheckoutRef = useRef(false);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', async next => {
+      if (next === 'active' && awaitingCheckoutRef.current) {
+        awaitingCheckoutRef.current = false;
+        try {
+          setVerifying(true);
+          const result = await refreshProStatus();
+          if (result?.isPro) {
+            Alert.alert('Welcome to Pro!', 'Your subscription is active. Enjoy unlimited generations.');
+          } else {
+            Alert.alert(
+              'Payment Not Detected',
+              'We did not find an active subscription yet. If you just paid, tap "Refresh Pro Status" in a moment.',
+            );
+          }
+        } finally {
+          setVerifying(false);
+        }
+      }
+    });
+    return () => sub.remove();
+  }, [refreshProStatus]);
 
   const handlePromoSubmit = async code => {
     try {
@@ -40,14 +68,34 @@ export default function SettingsScreen() {
       setUpgradeLoading(true);
       const checkoutUrl = await createCheckoutSession(user.uid, user.email);
       if (checkoutUrl) {
+        // Mark that we're expecting the user to return from Stripe. When
+        // the app comes back to the foreground, the AppState listener
+        // above will verify the subscription and auto-activate Pro.
+        awaitingCheckoutRef.current = true;
         await Linking.openURL(checkoutUrl);
-        Alert.alert('Success', 'Your upgrade is processing. Thank you!');
-        await upgradeToPro();
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to start upgrade.');
+      Alert.alert('Error', error?.message || 'Failed to start upgrade.');
     } finally {
       setUpgradeLoading(false);
+    }
+  };
+
+  const handleManualVerify = async () => {
+    if (!user) return;
+    try {
+      setVerifying(true);
+      const result = await refreshProStatus();
+      if (result?.isPro) {
+        Alert.alert('Pro Activated', 'Your subscription is active.');
+      } else {
+        Alert.alert(
+          'No Active Subscription',
+          'We could not find an active Stripe subscription for your account yet.',
+        );
+      }
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -303,6 +351,7 @@ export default function SettingsScreen() {
                   borderRadius: RADIUS.lg,
                   padding: SPACING.lg,
                   alignItems: 'center',
+                  marginBottom: SPACING.md,
                   ...SHADOWS.sm,
                 }}
               >
@@ -310,6 +359,23 @@ export default function SettingsScreen() {
                   Have a Promo Code?
                 </Text>
               </TouchableOpacity>
+
+              {/* Refresh Pro Status — for users who paid but Pro isn't active yet */}
+              {user && (
+                <TouchableOpacity
+                  onPress={handleManualVerify}
+                  disabled={verifying}
+                  style={{ padding: SPACING.sm, alignItems: 'center', opacity: verifying ? 0.5 : 0.7 }}
+                >
+                  {verifying ? (
+                    <ActivityIndicator size="small" color={COLORS.gray500} />
+                  ) : (
+                    <Text style={{ color: COLORS.gray500, fontSize: 12 }}>
+                      Already paid? Refresh Pro status
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              )}
             </>
           )}
         </View>
