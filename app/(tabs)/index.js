@@ -200,7 +200,10 @@ export default function HomeScreen() {
           {/* Header with Logo */}
           <View style={{ alignItems: 'center', marginBottom: SPACING.xl }}>
             <View style={{ alignItems: 'center', marginBottom: SPACING.md }}>
-              <Ionicons name="home" size={36} color={COLORS.orange} style={{ marginBottom: SPACING.xs }} />
+              <Image
+                source={require('../../assets/roof.png')}
+                style={{ width: 110, height: 46, resizeMode: 'contain', marginBottom: SPACING.xs }}
+              />
               <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
                 <Text style={{ fontSize: 32, fontWeight: '800', color: COLORS.navy, letterSpacing: -0.5 }}>
                   Listing
