@@ -98,7 +98,9 @@ export function AuthProvider({ children }) {
 
     if (user) {
       try {
-        await firebaseService.updateUserPromoCode(user.uid, true);
+        // Pass the actual code string so we can reconcile
+        // commission/referral attribution later.
+        await firebaseService.updateUserPromoCode(user.uid, code);
       } catch (error) {
         console.error('Error updating promo code in Firestore:', error);
       }

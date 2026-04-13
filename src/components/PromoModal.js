@@ -17,7 +17,7 @@ export function PromoModal({ visible, onDismiss, onApply, loading = false }) {
   const handleApply = async () => {
     setError('');
     if (!code.trim()) {
-      setError('Please enter a promo code');
+      setError('Please enter a code');
       return;
     }
 
@@ -71,7 +71,7 @@ export function PromoModal({ visible, onDismiss, onApply, loading = false }) {
                 color: COLORS.navy,
               }}
             >
-              Redeem Promo Code
+              Redeem a Code
             </Text>
             <TouchableOpacity onPress={handleDismiss}>
               <Ionicons name="close" size={24} color={COLORS.gray600} />
@@ -86,11 +86,11 @@ export function PromoModal({ visible, onDismiss, onApply, loading = false }) {
               lineHeight: 20,
             }}
           >
-            Enter your promo code to unlock unlimited generations.
+            Have a promo or commission code? Enter it below to unlock your benefits.
           </Text>
 
           <TextInput
-            placeholder="Enter promo code"
+            placeholder="Enter code"
             value={code}
             onChangeText={setCode}
             editable={!loading}

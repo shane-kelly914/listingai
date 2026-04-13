@@ -85,10 +85,14 @@ export async function updateUserProStatus(uid, isPro) {
   }
 }
 
-export async function updateUserPromoCode(uid, hasPromo) {
+export async function updateUserPromoCode(uid, code) {
   try {
+    // Save as boolean flag (back-compat with existing `promoCode` field)
+    // plus the actual code and redemption timestamp for commission attribution.
     await updateDoc(doc(db, 'users', uid), {
-      promoCode: hasPromo,
+      promoCode: Boolean(code),
+      redeemedCode: typeof code === 'string' ? code : null,
+      redeemedAt: code ? serverTimestamp() : null,
     });
   } catch (error) {
     console.error('Error updating promo code:', error);

@@ -1,5 +1,28 @@
 const API_BASE_URL = 'https://listingai-drab-psi.vercel.app';
 
+// Safely parse an API response. If the body isn't valid JSON (e.g. the server
+// returned an HTML error page or plain-text timeout), surface the first chunk
+// of the raw body in the thrown error so we can actually diagnose the problem
+// instead of getting cryptic "Unexpected character: T" errors.
+async function parseApiResponse(response, fallbackMsg) {
+  const rawText = await response.text();
+  let data = null;
+  try {
+    data = rawText ? JSON.parse(rawText) : null;
+  } catch (_) {
+    // Body wasn't JSON — build a helpful error with a preview of the body.
+    const preview = rawText.slice(0, 180).replace(/\s+/g, ' ').trim();
+    throw new Error(
+      `Server returned non-JSON (HTTP ${response.status}). ` +
+      `Body starts with: "${preview}"`
+    );
+  }
+  if (!response.ok) {
+    throw new Error(data?.error || `${fallbackMsg} (HTTP ${response.status})`);
+  }
+  return data;
+}
+
 export async function generateDescription(images, prompt) {
   try {
     const formattedImages = images.map(img => ({
@@ -18,12 +41,7 @@ export async function generateDescription(images, prompt) {
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to generate description');
-    }
-
-    const data = await response.json();
+    const data = await parseApiResponse(response, 'Failed to generate description');
     return data.text;
   } catch (error) {
     console.error('Error generating description:', error);
@@ -44,12 +62,7 @@ export async function transcribeAudio(base64Audio, mimeType = 'audio/mp4') {
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to transcribe audio');
-    }
-
-    const data = await response.json();
+    const data = await parseApiResponse(response, 'Failed to transcribe audio');
     return data.text;
   } catch (error) {
     console.error('Error transcribing audio:', error);
@@ -70,12 +83,7 @@ export async function createCheckoutSession(uid, email) {
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to create checkout session');
-    }
-
-    const data = await response.json();
+    const data = await parseApiResponse(response, 'Failed to create checkout session');
     return data.url;
   } catch (error) {
     console.error('Error creating checkout session:', error);

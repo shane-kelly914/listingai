@@ -120,9 +120,9 @@ export default function HomeScreen() {
       setPromoLoading(true);
       await redeemPromoCode(code);
       setShowPromoModal(false);
-      Alert.alert('Success', 'Promo code applied!');
+      Alert.alert('Success', 'Code applied — enjoy!');
     } catch (error) {
-      throw new Error(error.message || 'Invalid promo code');
+      throw new Error(error.message || 'Invalid code');
     } finally {
       setPromoLoading(false);
     }
@@ -302,6 +302,34 @@ export default function HomeScreen() {
             </Text>
           </TouchableOpacity>
         </ScrollView>
+
+        {/* Hidden promo/commission code entry — tiny bottom-right icon */}
+        <TouchableOpacity
+          onPress={() => setShowPromoModal(true)}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          style={{
+            position: 'absolute',
+            bottom: insets.bottom + SPACING.md,
+            right: SPACING.md,
+            padding: SPACING.xs,
+            opacity: hasPromo ? 0.6 : 0.25,
+          }}
+          accessibilityLabel="Enter promo or commission code"
+        >
+          <Ionicons
+            name={hasPromo ? 'pricetag' : 'pricetag-outline'}
+            size={18}
+            color={hasPromo ? COLORS.orange : COLORS.gray400}
+          />
+        </TouchableOpacity>
+
+        {/* Promo modal (also used by paywall flow on step 2) */}
+        <PromoModal
+          visible={showPromoModal}
+          onDismiss={() => setShowPromoModal(false)}
+          onApply={handlePromoSubmit}
+          loading={promoLoading}
+        />
       </View>
     );
   }
