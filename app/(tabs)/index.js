@@ -199,10 +199,17 @@ export default function HomeScreen() {
         >
           {/* Header with Logo */}
           <View style={{ alignItems: 'center', marginBottom: SPACING.xl }}>
-            <Image
-              source={require('../../assets/logo.png')}
-              style={{ height: 60, width: 150, resizeMode: 'contain', marginBottom: SPACING.md }}
-            />
+            <View style={{ alignItems: 'center', marginBottom: SPACING.md }}>
+              <Ionicons name="home" size={36} color={COLORS.orange} style={{ marginBottom: SPACING.xs }} />
+              <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+                <Text style={{ fontSize: 32, fontWeight: '800', color: COLORS.navy, letterSpacing: -0.5 }}>
+                  Listing
+                </Text>
+                <Text style={{ fontSize: 32, fontWeight: '800', color: COLORS.orange, letterSpacing: -0.5 }}>
+                  AI
+                </Text>
+              </View>
+            </View>
             <Text style={{ ...TYPOGRAPHY.h2, color: COLORS.navy, textAlign: 'center' }}>
               Create Perfect Listings
             </Text>
