@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, ScrollView, Text, TouchableOpacity, Alert, ActivityIndicator,
-  AppState,
+  AppState, Modal, TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
 import { useAuth } from '../../src/context/AuthContext';
-import { signOutUser } from '../../src/services/firebase';
+import { signOutUser, signInUser, signUpUser } from '../../src/services/firebase';
 import { createCheckoutSession } from '../../src/services/api';
 import { PromoModal } from '../../src/components/PromoModal';
 import { COLORS, SPACING, RADIUS, TYPOGRAPHY, SHADOWS } from '../../src/constants/theme';
@@ -16,6 +16,11 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { user, isPro, hasPromo, redeemPromoCode, refreshProStatus } = useAuth();
   const [showPromoModal, setShowPromoModal] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [signInEmail, setSignInEmail] = useState('');
+  const [signInPassword, setSignInPassword] = useState('');
+  const [signInLoading, setSignInLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [promoLoading, setPromoLoading] = useState(false);
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -96,6 +101,38 @@ export default function SettingsScreen() {
       }
     } finally {
       setVerifying(false);
+    }
+  };
+
+  const handleSignIn = async () => {
+    if (!signInEmail.trim() || !signInPassword.trim()) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }
+    try {
+      setSignInLoading(true);
+      if (isSignUp) {
+        await signUpUser(signInEmail.trim(), signInPassword.trim());
+      } else {
+        await signInUser(signInEmail.trim(), signInPassword.trim());
+      }
+      setShowSignInModal(false);
+      setSignInEmail('');
+      setSignInPassword('');
+    } catch (error) {
+      const msg =
+        error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password'
+          ? 'Invalid email or password.'
+          : error.code === 'auth/email-already-in-use'
+          ? 'An account with this email already exists. Try signing in instead.'
+          : error.code === 'auth/weak-password'
+          ? 'Password must be at least 6 characters.'
+          : error.code === 'auth/invalid-email'
+          ? 'Please enter a valid email address.'
+          : error.message || 'Authentication failed.';
+      Alert.alert('Error', msg);
+    } finally {
+      setSignInLoading(false);
     }
   };
 
@@ -215,6 +252,7 @@ export default function SettingsScreen() {
                 Sign in to save your progress and track usage.
               </Text>
               <TouchableOpacity
+                onPress={() => setShowSignInModal(true)}
                 style={{
                   backgroundColor: COLORS.orange,
                   paddingVertical: SPACING.lg,
@@ -412,6 +450,111 @@ export default function SettingsScreen() {
       </ScrollView>
 
       <PromoModal visible={showPromoModal} onDismiss={() => setShowPromoModal(false)} onApply={handlePromoSubmit} loading={promoLoading} />
+
+      {/* Sign In / Sign Up Modal */}
+      <Modal
+        visible={showSignInModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowSignInModal(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.white,
+              borderRadius: RADIUS.lg,
+              padding: SPACING.xl,
+              width: '85%',
+              maxWidth: 400,
+              ...SHADOWS.lg,
+            }}
+          >
+            <Text style={{ ...TYPOGRAPHY.h4, color: COLORS.navy, marginBottom: SPACING.lg, textAlign: 'center' }}>
+              {isSignUp ? 'Create Account' : 'Sign In'}
+            </Text>
+
+            <TextInput
+              placeholder="Email"
+              value={signInEmail}
+              onChangeText={setSignInEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              style={{
+                borderWidth: 1,
+                borderColor: COLORS.gray200,
+                borderRadius: RADIUS.md,
+                padding: SPACING.md,
+                marginBottom: SPACING.md,
+                fontSize: 16,
+                color: COLORS.navy,
+              }}
+            />
+
+            <TextInput
+              placeholder="Password"
+              value={signInPassword}
+              onChangeText={setSignInPassword}
+              secureTextEntry
+              textContentType={isSignUp ? 'newPassword' : 'password'}
+              style={{
+                borderWidth: 1,
+                borderColor: COLORS.gray200,
+                borderRadius: RADIUS.md,
+                padding: SPACING.md,
+                marginBottom: SPACING.xl,
+                fontSize: 16,
+                color: COLORS.navy,
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={handleSignIn}
+              disabled={signInLoading}
+              style={{
+                backgroundColor: COLORS.orange,
+                paddingVertical: SPACING.lg,
+                borderRadius: RADIUS.lg,
+                alignItems: 'center',
+                marginBottom: SPACING.md,
+                opacity: signInLoading ? 0.6 : 1,
+              }}
+            >
+              {signInLoading ? (
+                <ActivityIndicator color={COLORS.white} />
+              ) : (
+                <Text style={{ color: COLORS.white, fontWeight: '700', fontSize: 16 }}>
+                  {isSignUp ? 'Create Account' : 'Sign In'}
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setIsSignUp(!isSignUp)}
+              style={{ alignItems: 'center', marginBottom: SPACING.md }}
+            >
+              <Text style={{ color: COLORS.orange, fontSize: 14 }}>
+                {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setShowSignInModal(false);
+                setSignInEmail('');
+                setSignInPassword('');
+                setIsSignUp(false);
+              }}
+              style={{ alignItems: 'center' }}
+            >
+              <Text style={{ color: COLORS.gray600, fontSize: 14 }}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }

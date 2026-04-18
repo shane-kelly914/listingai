@@ -10,7 +10,13 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.listingai.app",
-      "requireFullScreen": true
+      "requireFullScreen": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "ListingAI needs access to your camera so you can take photos of a property on-site to include when generating listing descriptions.",
+        "NSMicrophoneUsageDescription": "ListingAI needs access to your microphone so you can dictate property details by voice instead of typing them manually.",
+        "NSPhotoLibraryUsageDescription": "ListingAI needs access to your photo library so you can select property photos to include when generating listing descriptions."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +25,11 @@
         "backgroundImage": "./assets/images/android-icon-background.png"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.listingai.app"
+      "package": "com.listingai.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "output": "static",
@@ -39,17 +49,23 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow ListingAI to access your photos",
-          "cameraPermission": "Allow ListingAI to access your camera"
+          "photosPermission": "ListingAI needs access to your photo library so you can select property photos to include when generating listing descriptions.",
+          "cameraPermission": "ListingAI needs access to your camera so you can take photos of a property on-site to include when generating listing descriptions."
         }
       ],
       [
         "expo-av",
         {
-          "microphonePermission": "Allow ListingAI to access your microphone"
+          "microphonePermission": "ListingAI needs access to your microphone so you can dictate property details by voice instead of typing them manually."
         }
       ],
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "932a62cf-7566-45f6-a4e1-a71c19563c02"
+      }
+    }
   }
 }

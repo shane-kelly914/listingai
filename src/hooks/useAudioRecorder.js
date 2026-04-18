@@ -1,6 +1,27 @@
 import { useState } from 'react';
+import { AppState } from 'react-native';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system/legacy';
+
+// Wait for the app to return to foreground after a system dialog
+const waitForForeground = () =>
+  new Promise(resolve => {
+    if (AppState.currentState === 'active') {
+      resolve();
+      return;
+    }
+    const sub = AppState.addEventListener('change', next => {
+      if (next === 'active') {
+        sub.remove();
+        resolve();
+      }
+    });
+    // Safety timeout — resolve anyway after 2s
+    setTimeout(() => {
+      sub.remove();
+      resolve();
+    }, 2000);
+  });
 
 export function useAudioRecorder() {
   const [recording, setRecording] = useState(null);
@@ -24,6 +45,11 @@ export function useAudioRecorder() {
       if (!hasPermission) {
         throw new Error('Audio recording permission is required');
       }
+
+      // Wait for app to return to foreground after the permission dialog
+      // dismisses — iOS puts the app in background while the dialog is showing,
+      // and Audio.setAudioModeAsync will fail if called before it's active again.
+      await waitForForeground();
 
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
